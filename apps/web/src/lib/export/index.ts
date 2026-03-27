@@ -13,3 +13,12 @@ export {
   type FrameRate,
   type ExportConfig,
 } from "./codec-support";
+
+export {
+  getGifFrameTimestamps,
+  estimateGifSize,
+  formatFileSize,
+  GIF_QUALITY_PRESETS,
+  DEFAULT_GIF_CONFIG,
+  type GifExportConfig,
+} from "./gif-config";
