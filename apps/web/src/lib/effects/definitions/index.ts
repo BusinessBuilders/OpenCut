@@ -12,6 +12,9 @@ import { rgbSplitEffectDefinition } from "./rgb-split";
 import { posterizeEffectDefinition } from "./posterize";
 import { invertEffectDefinition } from "./invert";
 import { embossEffectDefinition } from "./emboss";
+import { vhsEffectDefinition } from "./vhs";
+import { mirrorEffectDefinition } from "./mirror";
+import { letterboxEffectDefinition } from "./letterbox";
 
 const defaultEffects = [
 	blurEffectDefinition,
@@ -27,6 +30,9 @@ const defaultEffects = [
 	posterizeEffectDefinition,
 	invertEffectDefinition,
 	embossEffectDefinition,
+	vhsEffectDefinition,
+	mirrorEffectDefinition,
+	letterboxEffectDefinition,
 ];
 
 export function registerDefaultEffects(): void {
