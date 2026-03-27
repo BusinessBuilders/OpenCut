@@ -40,9 +40,17 @@ import {
 	ReorderClipEffectsCommand,
 	UpsertEffectParamKeyframeCommand,
 	RemoveEffectParamKeyframeCommand,
+	SetTransitionCommand,
+	SetSpeedCurveCommand,
+	SetColorAdjustmentsCommand,
+	SetAudioFadeCommand,
 } from "@/lib/commands/timeline";
 import { BatchCommand, PreviewTracker } from "@/lib/commands";
 import type { InsertElementParams } from "@/lib/commands/timeline/element/insert-element";
+import type { TransitionData } from "@/types/transition";
+import type { SpeedCurve } from "@/types/speed";
+import type { ColorAdjustments } from "@/types/color";
+import type { AudioFade } from "@/types/audio-fade";
 
 export class TimelineManager {
 	private listeners = new Set<() => void>();
@@ -609,5 +617,59 @@ export class TimelineManager {
 	updateTracks(newTracks: TimelineTrack[]): void {
 		this.editor.scenes.updateSceneTracks({ tracks: newTracks });
 		this.notify();
+	}
+
+	setTransition({
+		elementId,
+		trackId,
+		transition,
+	}: {
+		elementId: string;
+		trackId: string;
+		transition: TransitionData | undefined;
+	}): void {
+		const command = new SetTransitionCommand(elementId, trackId, transition);
+		this.editor.command.execute({ command });
+	}
+
+	setSpeedCurve({
+		elementId,
+		trackId,
+		speedCurve,
+		reversed,
+	}: {
+		elementId: string;
+		trackId: string;
+		speedCurve: SpeedCurve | undefined;
+		reversed: boolean | undefined;
+	}): void {
+		const command = new SetSpeedCurveCommand(elementId, trackId, speedCurve, reversed);
+		this.editor.command.execute({ command });
+	}
+
+	setColorAdjustments({
+		elementId,
+		trackId,
+		colorAdjustments,
+	}: {
+		elementId: string;
+		trackId: string;
+		colorAdjustments: ColorAdjustments | undefined;
+	}): void {
+		const command = new SetColorAdjustmentsCommand(elementId, trackId, colorAdjustments);
+		this.editor.command.execute({ command });
+	}
+
+	setAudioFade({
+		elementId,
+		trackId,
+		fade,
+	}: {
+		elementId: string;
+		trackId: string;
+		fade: AudioFade | undefined;
+	}): void {
+		const command = new SetAudioFadeCommand(elementId, trackId, fade);
+		this.editor.command.execute({ command });
 	}
 }
