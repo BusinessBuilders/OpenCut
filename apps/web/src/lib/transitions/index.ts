@@ -5,3 +5,4 @@ export {
   getTransitionsByCategory,
   hasTransition,
 } from "./registry";
+export { registerDefaultTransitions } from "./definitions";
