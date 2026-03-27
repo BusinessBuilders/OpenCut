@@ -11,3 +11,7 @@ export { ToggleElementsMutedCommand } from "./toggle-elements-muted";
 export { MoveElementCommand } from "./move-elements";
 export * from "./keyframes";
 export * from "./effects";
+export { SetTransitionCommand } from "./set-transition";
+export { SetSpeedCurveCommand } from "./set-speed-curve";
+export { SetColorAdjustmentsCommand } from "./set-color-adjustments";
+export { SetAudioFadeCommand } from "./set-audio-fade";
