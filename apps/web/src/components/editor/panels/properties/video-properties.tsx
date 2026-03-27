@@ -3,7 +3,7 @@ import type {
 	StickerElement,
 	VideoElement,
 } from "@/types/timeline";
-import { BlendingSection, TransformSection } from "./sections";
+import { BlendingSection, ColorGradingSection, TransformSection } from "./sections";
 
 export function VideoProperties({
 	element,
@@ -12,6 +12,8 @@ export function VideoProperties({
 	element: VideoElement | ImageElement | StickerElement;
 	trackId: string;
 }) {
+	const showColorGrading = element.type === "video" || element.type === "image";
+
 	return (
 		<div className="flex h-full flex-col">
 			<TransformSection
@@ -20,6 +22,9 @@ export function VideoProperties({
 				showTopBorder={false}
 			/>
 			<BlendingSection element={element} trackId={trackId} />
+			{showColorGrading && (
+				<ColorGradingSection element={element} trackId={trackId} />
+			)}
 		</div>
 	);
 }
