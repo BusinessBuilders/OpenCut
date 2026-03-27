@@ -31,7 +31,7 @@ import { usePropertyDraft } from "./hooks/use-property-draft";
 import { useKeyframedColorProperty } from "./hooks/use-keyframed-color-property";
 import { useKeyframedNumberProperty } from "./hooks/use-keyframed-number-property";
 import { useElementPlayhead } from "./hooks/use-element-playhead";
-import { TransformSection, BlendingSection } from "./sections";
+import { TransformSection, BlendingSection, TextAnimationSection } from "./sections";
 import { KeyframeToggle } from "./keyframe-toggle";
 import { isPropertyAtDefault } from "./sections/transform";
 import { resolveColorAtTime, resolveNumberAtTime } from "@/lib/animation";
@@ -59,6 +59,7 @@ export function TextProperties({
 			<TypographySection element={element} trackId={trackId} />
 			<SpacingSection element={element} trackId={trackId} />
 			<BackgroundSection element={element} trackId={trackId} />
+			<TextAnimationSection element={element} trackId={trackId} />
 		</div>
 	);
 }
