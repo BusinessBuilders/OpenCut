@@ -25,6 +25,9 @@ import {
 	ContextMenuContent,
 	ContextMenuItem,
 	ContextMenuSeparator,
+	ContextMenuSub,
+	ContextMenuSubContent,
+	ContextMenuSubTrigger,
 	ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import type {
@@ -36,6 +39,7 @@ import type {
 import type { MediaAsset } from "@/types/assets";
 import { mediaSupportsAudio } from "@/lib/media/media-utils";
 import { getActionDefinition, type TAction, invokeAction } from "@/lib/actions";
+import { getAllTransitions } from "@/lib/transitions";
 import { useElementSelection } from "@/hooks/timeline/element/use-element-selection";
 import { resolveStickerId } from "@/lib/stickers";
 import Image from "next/image";
@@ -354,6 +358,46 @@ export function TimelineElement({
 							Replace media
 						</ContextMenuItem>
 					</>
+				)}
+				{(element.type === "video" || element.type === "image") && (
+					<ContextMenuSub>
+						<ContextMenuSubTrigger
+							icon={<HugeiconsIcon icon={Exchange01Icon} />}
+						>
+							Transition
+						</ContextMenuSubTrigger>
+						<ContextMenuSubContent>
+							<ContextMenuItem
+								onClick={() =>
+									editor.timeline.setTransition({
+										elementId: element.id,
+										trackId: track.id,
+										transition: undefined,
+									})
+								}
+							>
+								None
+							</ContextMenuItem>
+							{getAllTransitions().map((definition) => (
+								<ContextMenuItem
+									key={definition.type}
+									onClick={() =>
+										editor.timeline.setTransition({
+											elementId: element.id,
+											trackId: track.id,
+											transition: {
+												type: definition.type,
+												duration: definition.defaultDuration,
+												params: definition.defaultParams,
+											},
+										})
+									}
+								>
+									{definition.name}
+								</ContextMenuItem>
+							))}
+						</ContextMenuSubContent>
+					</ContextMenuSub>
 				)}
 				<ContextMenuSeparator />
 				<DeleteMenuItem
