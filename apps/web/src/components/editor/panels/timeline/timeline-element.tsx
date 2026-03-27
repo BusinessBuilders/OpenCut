@@ -449,6 +449,15 @@ function ElementInner({
 				</div>
 			)}
 
+			{element.inTransition && (
+				<div
+					className="absolute left-0 top-0 bottom-0 pointer-events-none"
+					style={{ width: `${Math.min(element.inTransition.duration * 60, 40)}px` }}
+				>
+					<div className="h-full rounded-l-sm bg-white/20 border-r border-white/30" />
+				</div>
+			)}
+
 			{isSelected && (
 				<>
 					<ResizeHandle
