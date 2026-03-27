@@ -1,6 +1,10 @@
 import type { ElementAnimations } from "./animation";
 import type { Effect, EffectParamValues } from "./effects";
 import type { BlendMode, Transform } from "./rendering";
+import type { TransitionData } from "./transition";
+import type { SpeedCurve } from "./speed";
+import type { ColorAdjustments } from "./color";
+import type { AudioFade } from "./audio-fade";
 
 export interface Bookmark {
 	time: number;
@@ -72,6 +76,7 @@ interface BaseAudioElement extends BaseTimelineElement {
 	volume: number;
 	muted?: boolean;
 	buffer?: AudioBuffer;
+	fade?: AudioFade;
 }
 
 export interface UploadAudioElement extends BaseAudioElement {
@@ -95,6 +100,9 @@ interface BaseTimelineElement {
 	trimEnd: number;
 	sourceDuration?: number;
 	animations?: ElementAnimations;
+	inTransition?: TransitionData;
+	speedCurve?: SpeedCurve;
+	reversed?: boolean;
 }
 
 export interface VideoElement extends BaseTimelineElement {
@@ -106,6 +114,7 @@ export interface VideoElement extends BaseTimelineElement {
 	opacity: number;
 	blendMode?: BlendMode;
 	effects?: Effect[];
+	colorAdjustments?: ColorAdjustments;
 }
 
 export interface ImageElement extends BaseTimelineElement {
@@ -116,6 +125,7 @@ export interface ImageElement extends BaseTimelineElement {
 	opacity: number;
 	blendMode?: BlendMode;
 	effects?: Effect[];
+	colorAdjustments?: ColorAdjustments;
 }
 
 export interface TextBackground {
