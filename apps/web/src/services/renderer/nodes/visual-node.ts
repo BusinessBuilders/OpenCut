@@ -5,6 +5,8 @@ import type { Effect } from "@/types/effects";
 import type { BlendMode } from "@/types/rendering";
 import type { Transform } from "@/types/timeline";
 import type { ElementAnimations } from "@/types/animation";
+import type { ColorAdjustments } from "@/types/color";
+import { isColorAdjusted } from "@/types/color";
 import {
 	getElementLocalTime,
 	resolveOpacityAtTime,
@@ -25,6 +27,7 @@ export interface VisualNodeParams {
 	opacity: number;
 	blendMode?: BlendMode;
 	effects?: Effect[];
+	colorAdjustments?: ColorAdjustments;
 }
 
 export abstract class VisualNode<
@@ -103,7 +106,28 @@ export abstract class VisualNode<
 		const enabledEffects =
 			this.params.effects?.filter((effect) => effect.enabled) ?? [];
 
-		if (enabledEffects.length === 0) {
+		// Build effective effect list — prepend color-adjust if colorAdjustments are set
+		const colorAdj = this.params.colorAdjustments;
+		let allEffects = [...enabledEffects];
+		if (colorAdj && isColorAdjusted(colorAdj)) {
+			allEffects = [
+				{
+					id: "__color-adjust",
+					type: "color-adjust",
+					params: {
+						brightness: colorAdj.brightness,
+						contrast: colorAdj.contrast,
+						saturation: colorAdj.saturation,
+						temperature: colorAdj.temperature,
+						exposure: colorAdj.exposure,
+					},
+					enabled: true,
+				},
+				...allEffects,
+			];
+		}
+
+		if (allEffects.length === 0) {
 			renderer.context.drawImage(source, x, y, scaledWidth, scaledHeight);
 			renderer.context.restore();
 			return;
@@ -127,7 +151,7 @@ export abstract class VisualNode<
 
 		let currentResult: CanvasImageSource = elementCanvas;
 
-		for (const effect of enabledEffects) {
+		for (const effect of allEffects) {
 			const resolvedParams = resolveEffectParamsAtTime({
 				effect,
 				animations: this.params.animations,

@@ -80,6 +80,7 @@ function buildTrackNodes({
 							opacity: element.opacity,
 							blendMode: element.blendMode,
 							effects: element.effects,
+							colorAdjustments: element.colorAdjustments,
 						}),
 					);
 				}
@@ -96,6 +97,7 @@ function buildTrackNodes({
 							opacity: element.opacity,
 							blendMode: element.blendMode,
 							effects: element.effects,
+							colorAdjustments: element.colorAdjustments,
 							...(isPreview && {
 								maxSourceSize: PREVIEW_MAX_IMAGE_SIZE,
 							}),
