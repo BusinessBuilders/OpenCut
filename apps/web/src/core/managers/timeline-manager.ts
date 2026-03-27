@@ -44,6 +44,7 @@ import {
 	SetSpeedCurveCommand,
 	SetColorAdjustmentsCommand,
 	SetAudioFadeCommand,
+	SetTextAnimationCommand,
 } from "@/lib/commands/timeline";
 import { BatchCommand, PreviewTracker } from "@/lib/commands";
 import type { InsertElementParams } from "@/lib/commands/timeline/element/insert-element";
@@ -51,6 +52,7 @@ import type { TransitionData } from "@/types/transition";
 import type { SpeedCurve } from "@/types/speed";
 import type { ColorAdjustments } from "@/types/color";
 import type { AudioFade } from "@/types/audio-fade";
+import type { TextAnimationConfig } from "@/types/text-animation";
 
 export class TimelineManager {
 	private listeners = new Set<() => void>();
@@ -670,6 +672,19 @@ export class TimelineManager {
 		fade: AudioFade | undefined;
 	}): void {
 		const command = new SetAudioFadeCommand(elementId, trackId, fade);
+		this.editor.command.execute({ command });
+	}
+
+	setTextAnimation({
+		elementId,
+		trackId,
+		textAnimation,
+	}: {
+		elementId: string;
+		trackId: string;
+		textAnimation: TextAnimationConfig | undefined;
+	}): void {
+		const command = new SetTextAnimationCommand(elementId, trackId, textAnimation);
 		this.editor.command.execute({ command });
 	}
 }

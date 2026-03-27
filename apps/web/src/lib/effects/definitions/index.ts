@@ -5,6 +5,13 @@ import { vignetteEffectDefinition } from "./vignette";
 import { filmGrainEffectDefinition } from "./film-grain";
 import { sepiaEffectDefinition } from "./sepia";
 import { sharpenEffectDefinition } from "./sharpen";
+import { chromaKeyEffectDefinition } from "./chroma-key";
+import { glitchEffectDefinition } from "./glitch";
+import { pixelateEffectDefinition } from "./pixelate";
+import { rgbSplitEffectDefinition } from "./rgb-split";
+import { posterizeEffectDefinition } from "./posterize";
+import { invertEffectDefinition } from "./invert";
+import { embossEffectDefinition } from "./emboss";
 
 const defaultEffects = [
 	blurEffectDefinition,
@@ -13,6 +20,13 @@ const defaultEffects = [
 	filmGrainEffectDefinition,
 	sepiaEffectDefinition,
 	sharpenEffectDefinition,
+	chromaKeyEffectDefinition,
+	glitchEffectDefinition,
+	pixelateEffectDefinition,
+	rgbSplitEffectDefinition,
+	posterizeEffectDefinition,
+	invertEffectDefinition,
+	embossEffectDefinition,
 ];
 
 export function registerDefaultEffects(): void {

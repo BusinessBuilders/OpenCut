@@ -15,3 +15,4 @@ export { SetTransitionCommand } from "./set-transition";
 export { SetSpeedCurveCommand } from "./set-speed-curve";
 export { SetColorAdjustmentsCommand } from "./set-color-adjustments";
 export { SetAudioFadeCommand } from "./set-audio-fade";
+export { SetTextAnimationCommand } from "./set-text-animation";

@@ -5,6 +5,7 @@ import type { TransitionData } from "./transition";
 import type { SpeedCurve } from "./speed";
 import type { ColorAdjustments } from "./color";
 import type { AudioFade } from "./audio-fade";
+import type { TextAnimationConfig } from "./text-animation";
 
 export interface Bookmark {
 	time: number;
@@ -156,6 +157,7 @@ export interface TextElement extends BaseTimelineElement {
 	opacity: number;
 	blendMode?: BlendMode;
 	effects?: Effect[];
+	textAnimation?: TextAnimationConfig;
 }
 
 export interface StickerElement extends BaseTimelineElement {
