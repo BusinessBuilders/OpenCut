@@ -7,6 +7,8 @@ import type { Transform } from "@/types/timeline";
 import type { ElementAnimations } from "@/types/animation";
 import type { ColorAdjustments } from "@/types/color";
 import { isColorAdjusted } from "@/types/color";
+import type { SpeedCurve } from "@/types/speed";
+import { getSourceTimeForPlaybackTime } from "@/lib/speed/curve";
 import {
 	getElementLocalTime,
 	resolveOpacityAtTime,
@@ -28,13 +30,34 @@ export interface VisualNodeParams {
 	blendMode?: BlendMode;
 	effects?: Effect[];
 	colorAdjustments?: ColorAdjustments;
+	speedCurve?: SpeedCurve;
+	reversed?: boolean;
 }
 
 export abstract class VisualNode<
 	Params extends VisualNodeParams = VisualNodeParams,
 > extends BaseNode<Params> {
 	protected getSourceLocalTime({ time }: { time: number }): number {
-		return time - this.params.timeOffset + this.params.trimStart;
+		let localPlaybackTime = time - this.params.timeOffset;
+
+		// Apply speed curve remapping
+		if (this.params.speedCurve) {
+			localPlaybackTime = getSourceTimeForPlaybackTime({
+				curve: this.params.speedCurve,
+				playbackTime: localPlaybackTime,
+				elementDuration: this.params.duration,
+			});
+		}
+
+		let sourceTime = localPlaybackTime + this.params.trimStart;
+
+		// Apply reverse
+		if (this.params.reversed) {
+			const sourceDuration = this.params.trimStart + this.params.duration;
+			sourceTime = sourceDuration - (sourceTime - this.params.trimStart) + this.params.trimStart;
+		}
+
+		return sourceTime;
 	}
 
 	protected getAnimationLocalTime({ time }: { time: number }): number {

@@ -136,6 +136,8 @@ function buildTrackNodes({
 							blendMode: element.blendMode,
 							effects: element.effects,
 							colorAdjustments: element.colorAdjustments,
+							speedCurve: element.speedCurve,
+							reversed: element.reversed,
 						}),
 					});
 				}
@@ -154,6 +156,8 @@ function buildTrackNodes({
 							blendMode: element.blendMode,
 							effects: element.effects,
 							colorAdjustments: element.colorAdjustments,
+							speedCurve: element.speedCurve,
+							reversed: element.reversed,
 							...(isPreview && {
 								maxSourceSize: PREVIEW_MAX_IMAGE_SIZE,
 							}),
