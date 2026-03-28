@@ -1,4 +1,4 @@
-import type { TimelineTrack } from "@/types/timeline";
+import type { TimelineTrack, VideoElement, ImageElement } from "@/types/timeline";
 import type { MediaAsset } from "@/types/assets";
 import { RootNode } from "./nodes/root-node";
 import { VideoNode } from "./nodes/video-node";
@@ -8,6 +8,7 @@ import { StickerNode } from "./nodes/sticker-node";
 import { ColorNode } from "./nodes/color-node";
 import { CompositeEffectNode } from "./nodes/composite-effect-node";
 import { EffectLayerNode } from "./nodes/effect-layer-node";
+import { TransitionNode } from "./nodes/transition-node";
 import type { BaseNode } from "./nodes/base-node";
 import type { TBackground, TCanvasSize } from "@/types/project";
 import { DEFAULT_BLUR_INTENSITY } from "@/constants/project-constants";
@@ -30,6 +31,53 @@ function getVisibleSortedElements({
 		});
 }
 
+/**
+ * Post-processes a list of per-track [element, node] pairs to detect adjacent
+ * video/image elements where the later one has an inTransition. When found,
+ * both individual nodes are replaced with a single TransitionNode that blends
+ * them during the overlap period and delegates to the appropriate child outside
+ * of it.
+ */
+function wrapWithTransitions(
+	elementNodePairs: Array<{ element: VideoElement | ImageElement; node: BaseNode }>,
+): BaseNode[] {
+	if (elementNodePairs.length === 0) return [];
+
+	const result: BaseNode[] = [];
+	let i = 0;
+
+	while (i < elementNodePairs.length) {
+		const current = elementNodePairs[i];
+		const next = elementNodePairs[i + 1];
+
+		if (
+			next?.element.inTransition &&
+			next.element.inTransition.duration > 0
+		) {
+			const transitionData = next.element.inTransition;
+			const overlapStart = next.element.startTime;
+			const overlapEnd = next.element.startTime + transitionData.duration;
+
+			result.push(
+				new TransitionNode({
+					transitionData,
+					overlapStart,
+					overlapEnd,
+					outgoingNode: current.node,
+					incomingNode: next.node,
+				}),
+			);
+			// Skip both elements — the TransitionNode handles the full combined range
+			i += 2;
+		} else {
+			result.push(current.node);
+			i += 1;
+		}
+	}
+
+	return result;
+}
+
 function buildTrackNodes({
 	tracks,
 	mediaMap,
@@ -45,6 +93,12 @@ function buildTrackNodes({
 
 	for (const track of tracks) {
 		const elements = getVisibleSortedElements({ track });
+
+		// Collect video/image element+node pairs for transition post-processing
+		const videoImagePairs: Array<{
+			element: VideoElement | ImageElement;
+			node: BaseNode;
+		}> = [];
 
 		for (const element of elements) {
 			if (element.type === "effect") {
@@ -66,8 +120,9 @@ function buildTrackNodes({
 				}
 
 				if (mediaAsset.type === "video") {
-					nodes.push(
-						new VideoNode({
+					videoImagePairs.push({
+						element,
+						node: new VideoNode({
 							mediaId: mediaAsset.id,
 							url: mediaAsset.url,
 							file: mediaAsset.file,
@@ -82,11 +137,12 @@ function buildTrackNodes({
 							effects: element.effects,
 							colorAdjustments: element.colorAdjustments,
 						}),
-					);
+					});
 				}
 				if (mediaAsset.type === "image") {
-					nodes.push(
-						new ImageNode({
+					videoImagePairs.push({
+						element,
+						node: new ImageNode({
 							url: mediaAsset.url,
 							duration: element.duration,
 							timeOffset: element.startTime,
@@ -102,8 +158,9 @@ function buildTrackNodes({
 								maxSourceSize: PREVIEW_MAX_IMAGE_SIZE,
 							}),
 						}),
-					);
+					});
 				}
+				continue;
 			}
 
 			if (element.type === "text") {
@@ -134,6 +191,12 @@ function buildTrackNodes({
 					}),
 				);
 			}
+		}
+
+		// Wrap adjacent video/image pairs with TransitionNode where applicable,
+		// then add all resulting nodes for this track
+		for (const node of wrapWithTransitions(videoImagePairs)) {
+			nodes.push(node);
 		}
 	}
 
